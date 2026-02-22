@@ -8,10 +8,10 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   applicationName: "LabDemo",
   title: "LabDemo - AI Teaching Assistant for CS Labs",
-  description: "Get ethical hints for your CS assignments using Groq",
+  description: "Get informative hints for your CS assignments using Groq",
   openGraph: {
     title: "LabDemo - AI Teaching Assistant for CS Labs",
-    description: "Get ethical hints for your CS assignments using Groq",
+    description: "Get informative hints for your CS assignments using Groq",
     siteName: "LabDemo",
   },
 };

@@ -16,7 +16,7 @@ TAs can't scale to everyone. StackOverflow teaches copying, not debugging skills
 
 ## 🪄 The Solution
 
-**Paste 3 things → instant ethical hints (no cheating):**
+**Paste 3 things → instant informative hints (no cheating):**
 ```
 🔴 What broke: Loop went past array end (plain English)
 💡 Core concept: Array indexing starts at 0

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef, useEffect, useCallback } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Textarea } from '@/components/ui/textarea';
 import { Label } from '@/components/ui/label';
@@ -21,6 +21,74 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [showExamples, setShowExamples] = useState(false);
+  const [detectingError, setDetectingError] = useState(false);
+  const detectErrorAbortRef = useRef<AbortController | null>(null);
+
+  const runErrorDetection = useCallback(async (codeText: string, lang: string) => {
+    if (!codeText.trim() || !lang || lang === 'plaintext') return null;
+    const controller = new AbortController();
+    detectErrorAbortRef.current = controller;
+    try {
+      const res = await fetch('/api/detect-error', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: codeText, language: lang }),
+        signal: controller.signal,
+      });
+      const data = await res.json();
+      if (data.hasError && data.errorMessage) return String(data.errorMessage).trim();
+      return null;
+    } catch {
+      return null;
+    } finally {
+      detectErrorAbortRef.current = null;
+    }
+  }, []);
+
+  const handleSuggestError = async () => {
+    if (!code.trim()) {
+      setErrorMessage('Paste or import code first.');
+      return;
+    }
+    setErrorMessage(null);
+    setDetectingError(true);
+    try {
+      const suggested = await runErrorDetection(code, language);
+      if (suggested) setError(suggested);
+      else setErrorMessage('No error detected, or detection failed. Try running the code locally and paste the error.');
+    } finally {
+      setDetectingError(false);
+    }
+  };
+
+  // Auto-detect error when code/language changes (debounced), only if error box is empty
+  useEffect(() => {
+    if (error.trim() !== '' || !code.trim() || language === 'plaintext') return;
+    const t = setTimeout(async () => {
+      const controller = new AbortController();
+      detectErrorAbortRef.current = controller;
+      try {
+        const res = await fetch('/api/detect-error', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ code, language }),
+          signal: controller.signal,
+        });
+        const data = await res.json();
+        if (!controller.signal.aborted && data.hasError && data.errorMessage) {
+          setError(String(data.errorMessage).trim());
+        }
+      } catch {
+        // ignore (e.g. aborted or network)
+      } finally {
+        detectErrorAbortRef.current = null;
+      }
+    }, 1200);
+    return () => {
+      clearTimeout(t);
+      detectErrorAbortRef.current?.abort();
+    };
+  }, [code, language, error]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -95,7 +163,7 @@ export default function Home() {
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8 text-center">
           <h2 className="text-3xl font-bold mb-2">
-            Get Ethical Hints for Your CS Assignments
+            Get Informative Hints for Your CS Assignments
           </h2>
           <p className="text-muted-foreground">
             Powered by Groq • Learn debugging, not copying
@@ -176,14 +244,36 @@ export default function Home() {
 
               {/* Error Message */}
               <div className="space-y-2">
-                <Label htmlFor="error">
-                  Error Message / Output <span className="text-destructive">*</span>
-                </Label>
+                <div className="flex items-center justify-between gap-2 flex-wrap">
+                  <Label htmlFor="error">
+                    Error Message / Output <span className="text-destructive">*</span>
+                  </Label>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    disabled={!code.trim() || detectingError || loading}
+                    onClick={handleSuggestError}
+                    className="shrink-0 gap-1.5"
+                  >
+                    {detectingError ? (
+                      <>
+                        <div className="animate-spin rounded-full h-3.5 w-3.5 border-2 border-primary border-t-transparent" />
+                        Detecting...
+                      </>
+                    ) : (
+                      <>
+                        <AlertCircle className="h-4 w-4" />
+                        Suggest error from code
+                      </>
+                    )}
+                  </Button>
+                </div>
                 <Textarea
                   id="error"
                   value={error}
                   onChange={(e) => setError(e.target.value)}
-                  placeholder="Paste the error message or unexpected output here..."
+                  placeholder="Paste the error message or unexpected output here (or paste code above and use Suggest error from code)..."
                   className="min-h-[100px] font-mono text-sm"
                 />
               </div>
