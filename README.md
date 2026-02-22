@@ -10,7 +10,7 @@ CS students lose **2-6 hours per week** decoding cryptic error messages like `In
 🧭 Debug nudge: "Check i <= vs i < condition"
 
 ## 💡 Inspiration
-Built from **my own COMP101 C# labs** - 3 hours lost to one array bounds error. Wanted to create the TA I wish I had for every first-year CS student.
+Inspired by my own experiences in CS Labs. They would often get busy and getting individual help would often take a very long time.
 
 ## 🌍 Impact
 - **1.2M CS students globally** could save 100+ hours/year
