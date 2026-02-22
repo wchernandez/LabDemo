@@ -18,7 +18,7 @@ export async function POST(req: NextRequest) {
       ? `- Assignment: "${assignment}"`
       : '- Assignment: (none provided)';
 
-    const prompt = `You are AutoTA, an ethical CS teaching assistant for first-year students.
+    const prompt = `You are LabDemo, an ethical CS teaching assistant for first-year students.
 Your role is to help students learn debugging skills, NOT to solve problems for them.
 
 Input:

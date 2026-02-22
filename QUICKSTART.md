@@ -1,6 +1,6 @@
 # Quick Start Guide
 
-Get AutoTA running in 5 minutes!
+Get LabDemo running in 5 minutes!
 
 ## Step 1: Install Dependencies
 

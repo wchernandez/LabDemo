@@ -1,5 +1,5 @@
 ```markdown
-# 🚀 AutoTA - AI Teaching Assistant for CS Labs
+# 🚀 LabDemo - AI Teaching Assistant for CS Labs
 
 **From 2-hour error hell → 3-second debug hints for CS students**
 
@@ -25,7 +25,7 @@ TAs can't scale to everyone. StackOverflow teaches copying, not debugging skills
 
 ## 📱 Live Examples (7 languages)
 
-| Language | Common Error | AutoTA Fix |
+| Language | Common Error | LabDemo Fix |
 |----------|--------------|------------|
 | **C#** | `IndexOutOfRangeException` | Array bounds exclusive |
 | **Python** | `IndexError: list index out of range` | Lists start at index 0 |
@@ -45,8 +45,8 @@ Deploy: Vercel (global CDN, auto-SSL)
 
 ## 🚀 Run Locally (2 minutes)
 ```bash
-git clone https://github.com/wchernandez/autota.git
-cd autota
+git clone https://github.com/wchernandez/labdemo.git
+cd labdemo
 # Get free key: console.groq.com
 echo "GROQ_API_KEY=your_key_here" > .env.local
 npm install
